@@ -1,0 +1,96 @@
+CREATE DATABASE Mood_based_Music;
+USE Mood_based_Music;
+
+-- Creating Users table
+CREATE TABLE USERS (
+    User_id INT PRIMARY KEY AUTO_INCREMENT,
+    UserName VARCHAR(50) UNIQUE NOT NULL,
+    Role ENUM('Admin', 'Listener') NOT NULL -- Added role to distinguish between Admins and Listeners
+);
+
+-- Creating Admin table
+CREATE TABLE Admin (
+    Admin_id INT PRIMARY KEY AUTO_INCREMENT, -- Added Admin_id as primary key
+    User_id INT UNIQUE, -- User_id is unique to ensure one-to-one relationship
+    FirstName VARCHAR(100) NOT NULL,
+    LastName VARCHAR(100) NOT NULL,
+    Password VARCHAR(255) NOT NULL,
+    FOREIGN KEY (User_id) REFERENCES USERS(User_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- Creating Listener table
+CREATE TABLE Listener (
+    Listener_id INT PRIMARY KEY AUTO_INCREMENT, -- Added Listener_id as primary key
+    User_id INT UNIQUE, -- User_id is unique to ensure one-to-one relationship
+    FirstName VARCHAR(100) NOT NULL,
+    LastName VARCHAR(100) NOT NULL,
+    Password VARCHAR(255) NOT NULL,
+    FOREIGN KEY (User_id) REFERENCES USERS(User_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- Creating Music table
+CREATE TABLE Music (
+    Music_id INT PRIMARY KEY AUTO_INCREMENT,
+    LANGUAGE VARCHAR(50) NOT NULL,
+    Artist_name VARCHAR(100) NOT NULL,
+    Mood_id INT, -- Added Mood_id to associate music with a mood
+    FOREIGN KEY (Mood_id) REFERENCES Mood(Mood_id) ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- Creating Mood table
+CREATE TABLE Mood (
+    Mood_id INT PRIMARY KEY AUTO_INCREMENT,
+    Mood_name VARCHAR(100) NOT NULL UNIQUE -- Renamed Recommendation to Mood_name for clarity
+);
+
+-- Creating Feedback table
+CREATE TABLE Feedback (
+    Feedback_id INT PRIMARY KEY AUTO_INCREMENT,
+    User_id INT,
+    Preferences VARCHAR(100),
+    FOREIGN KEY (User_id) REFERENCES Listener(User_id) ON DELETE CASCADE
+);
+
+-- Inserting data into USERS table
+INSERT INTO USERS (UserName, Role) VALUES 
+('admin1', 'Admin'), 
+('admin2', 'Admin'),
+('admin3', 'Admin'),
+('listener1', 'Listener'), 
+('listener2', 'Listener'),
+('listener3', 'Listener');
+
+-- Inserting data into Admin table
+INSERT INTO Admin (User_id, FirstName, LastName, Password) VALUES 
+(1, 'Sumaya', 'Suimee', '123'),
+(2, 'Sinthia', 'Rachona', '123'),
+(3, 'Mansib', 'Saiful', '123');
+
+-- Inserting data into Listener table
+INSERT INTO Listener (User_id, FirstName, LastName, Password) VALUES 
+(4, 'Alice', 'Smith', '123'),
+(5, 'Bob', 'Johnson', '456'),
+(6, 'Tintin', 'Smith', '456');
+
+-- Inserting data into Mood table
+INSERT INTO Mood (Mood_name) VALUES 
+('Happy'), 
+('Sad'), 
+('Energetic'), 
+('Relaxed'),
+('Romantic');
+
+-- Inserting data into Music table
+INSERT INTO Music (LANGUAGE, Artist_name, Mood_id) VALUES
+('English', 'Ed Sheeran', 1), -- Happy
+('English', 'Weekend', 3), -- Energetic
+('English', 'Lana Del Rey', 4), -- Relaxed
+('Hindi', 'Arijit Singh', 5), -- Romantic
+('Hindi', 'Atif Aslam', 2), -- Sad
+('Hindi', 'Anuv Jain', 4), -- Relaxed
+('French', 'Indila', 1); -- Happy
+
+-- Inserting data into Feedback table
+INSERT INTO Feedback (User_id, Preferences) VALUES 
+(4, 'Loves pop music'), 
+(5, 'Prefers classical tunes');

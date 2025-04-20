@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
+    <style>
+        /* Add your CSS styles here */
+    </style>
+</head>
+<body>
+    <!-- Left Sidebar: Queue of Songs -->
+    <div class="sidebar left-sidebar">
+        <h2>Queue</h2>
+        <ul id="queue-list">
+            <?php foreach ($queueSongs as $queueSong): ?>
+                <li>
+                    <?php echo htmlspecialchars($queueSong['Title']); ?> - <?php echo htmlspecialchars($queueSong['Artist']); ?>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+
+    <!-- Main Container: Music Player -->
+    <div class="container">
+        <h1><?php echo htmlspecialchars($song['Title']); ?></h1>
+        <h2><?php echo htmlspecialchars($song['Artist']); ?></h2>
+        <h3>Mood: <?php echo htmlspecialchars($song['Mood']); ?></h3>
+        <div class="song-item">
+            <audio id="audio-player" controls autoplay onended="playNextSong()">
+                <source src="music/<?php echo $song['Music_id']; ?>.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+        <a href="select_mood.php" class="back-link">Choose Another Mood</a>
+    </div>
+
+    <!-- Right Sidebar: All Songs -->
+    <div class="sidebar right-sidebar">
+        <h2>All Songs</h2>
+        <ul id="all-songs-list">
+            <?php foreach ($allSongs as $allSong): ?>
+                <li>
+                    <?php echo htmlspecialchars($allSong['Title']); ?> - <?php echo htmlspecialchars($allSong['Artist']); ?>
+                    <button onclick="addSong(<?php echo $allSong['Music_id']; ?>)">✓</button>
+                    <button onclick="removeSong(<?php echo $allSong['Music_id']; ?>)">✗</button>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+
+    <script>
+        // Function to add a song to the user's list for the current mood
+        function addSong(songId) {
+            fetch('', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `add_song=1&song_id=${songId}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert(data.message);
+                    // Refresh the queue list
+                    fetchQueue();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while adding the song.');
+            });
+        }
+
+        // Function to remove a song from the user's list
+        function removeSong(songId) {
+            fetch('', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `remove_song=1&song_id=${songId}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert(data.message);
+                    // Refresh the queue list
+                    fetchQueue();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while removing the song.');
+            });
+        }
+
+        // Function to fetch and update the queue list
+        function fetchQueue() {
+            fetch('')
+            .then(response => response.text())
+            .then(data => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(data, 'text/html');
+                const newQueueList = doc.getElementById('queue-list').innerHTML;
+                document.getElementById('queue-list').innerHTML = newQueueList;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while fetching the queue.');
+            });
+        }
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
+    <style>
+        /* Add your CSS styles here */
+    </style>
+</head>
+<body>
+    <!-- Left Sidebar: Queue of Songs -->
+    <div class="sidebar left-sidebar">
+        <h2>Queue</h2>
+        <ul id="queue-list">
+            <?php foreach ($queueSongs as $queueSong): ?>
+                <li>
+                    <?php echo htmlspecialchars($queueSong['Title']); ?> - <?php echo htmlspecialchars($queueSong['Artist']); ?>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+
+    <!-- Main Container: Music Player -->
+    <div class="container">
+        <h1><?php echo htmlspecialchars($song['Title']); ?></h1>
+        <h2><?php echo htmlspecialchars($song['Artist']); ?></h2>
+        <h3>Mood: <?php echo htmlspecialchars($song['Mood']); ?></h3>
+        <div class="song-item">
+            <audio id="audio-player" controls autoplay onended="playNextSong()">
+                <source src="music/<?php echo $song['Music_id']; ?>.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+        <a href="select_mood.php" class="back-link">Choose Another Mood</a>
+    </div>
+
+    <!-- Right Sidebar: All Songs -->
+    <div class="sidebar right-sidebar">
+        <h2>All Songs</h2>
+        <ul id="all-songs-list">
+            <?php foreach ($allSongs as $allSong): ?>
+                <li>
+                    <?php echo htmlspecialchars($allSong['Title']); ?> - <?php echo htmlspecialchars($allSong['Artist']); ?>
+                    <button onclick="addSong(<?php echo $allSong['Music_id']; ?>)">✓</button>
+                    <button onclick="removeSong(<?php echo $allSong['Music_id']; ?>)">✗</button>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+
+    <script>
+        // Function to add a song to the user's list for the current mood
+        function addSong(songId) {
+            fetch('', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `add_song=1&song_id=${songId}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert(data.message);
+                    // Refresh the queue list
+                    fetchQueue();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while adding the song.');
+            });
+        }
+
+        // Function to remove a song from the user's list
+        function removeSong(songId) {
+            fetch('', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `remove_song=1&song_id=${songId}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert(data.message);
+                    // Refresh the queue list
+                    fetchQueue();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while removing the song.');
+            });
+        }
+
+        // Function to fetch and update the queue list
+        function fetchQueue() {
+            fetch('')
+            .then(response => response.text())
+            .then(data => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(data, 'text/html');
+                const newQueueList = doc.getElementById('queue-list').innerHTML;
+                document.getElementById('queue-list').innerHTML = newQueueList;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while fetching the queue.');
+            });
+        }
+    </script>
+</body>
+</html>
